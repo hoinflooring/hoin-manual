@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>호인 마루영업 매뉴얼</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --walnut:#3E2B23;
+    --walnut-2:#2A1D17;
+    --oak:#B98554;
+    --oak-light:#D9B78C;
+    --birch:#FAF5EC;
+    --birch-2:#F1E8D8;
+    --charcoal:#2B2420;
+    --line:#E4D8C6;
+    --sage:#6E7F5C;
+    --sage-light:#E6EBDF;
+    --radius:2px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--birch);
+    color:var(--charcoal);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    line-height:1.65;
+    padding-bottom:60px;
+  }
+  h1,h2,h3,.display{
+    font-family:'Fraunces',serif;
+    color:var(--walnut);
+    letter-spacing:-0.01em;
+  }
+  .mono{
+    font-family:'IBM Plex Mono',monospace;
+    letter-spacing:0.02em;
+  }
+  /* ---------- plank seam divider (signature motif) ---------- */
+  .seam{
+    position:relative;
+    height:14px;
+    width:100%;
+    overflow:hidden;
+  }
+  .seam::before{
+    content:"";
+    position:absolute;
+    top:6px; left:0; right:0;
+    height:1px;
+    background:var(--line);
+  }
+  .seam::after{
+    content:"";
+    position:absolute;
+    top:0; bottom:0; left:0; right:0;
+    background-image:repeating-linear-gradient(
+      90deg,
+      transparent 0px, transparent 78px,
+      var(--line) 78px, var(--line) 80px
+    );
+    opacity:0.9;
+  }
+  /* ---------- top bar ---------- */
+  .topbar{
+    position:sticky; top:0; z-index:50;
+    background:var(--walnut);
+    color:var(--birch);
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 16px;
+    box-shadow:0 2px 10px rgba(0,0,0,0.15);
+  }
+  .topbar .brand{
+    display:flex; flex-direction:column; line-height:1.1;
+  }
+  .topbar .brand .name{
+    font-family:'Fraunces',serif;
+    font-size:1.15rem;
+    font-weight:600;
+  }
+  .topbar .brand .tag{
+    font-size:0.68rem;
+    color:var(--oak-light);
+    font-family:'IBM Plex Mono',monospace;
+    margin-top:2px;
+  }
+  .menu-btn{
+    width:40px; height:40px;
+    border:1px solid rgba(250,245,236,0.25);
+    background:transparent;
+    border-radius:var(--radius);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+  }
+  .menu-btn span, .menu-btn::before, .menu-btn::after{
+    /* using inner svg instead */
+  }
+  /* ---------- drawer nav ---------- */
+  .overlay{
+    position:fixed; inset:0;
+    background:rgba(20,14,10,0.45);
+    opacity:0; pointer-events:none;
+    transition:opacity 0.25s ease;
+    z-index:60;
+  }
+  .overlay.open{opacity:1; pointer-events:auto;}
+  .drawer{
+    position:fixed; top:0; bottom:0; right:-320px;
+    width:300px; max-width:85vw;
+    background:var(--birch);
+    z-index:70;
+    box-shadow:-8px 0 24px rgba(0,0,0,0.2);
+    transition:right 0.3s cubic-bezier(.4,0,.2,1);
+    overflow-y:auto;
+    padding:20px 0 40px;
+  }
+  .drawer.open{right:0;}
+  .drawer-head{
+    padding:0 20px 16px;
+    border-bottom:1px solid var(--line);
+    margin-bottom:8px;
+  }
+  .drawer-head .label{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.7rem;
+    color:var(--oak);
+    text-transform:uppercase;
+  }
+  .drawer-head h3{margin:4px 0 0; font-size:1.1rem;}
+  .drawer a{
+    display:flex; align-items:baseline; gap:10px;
+    padding:11px 20px;
+    color:var(--charcoal);
+    text-decoration:none;
+    font-size:0.92rem;
+    border-left:3px solid transparent;
+  }
+  .drawer a:active, .drawer a:hover{
+    background:var(--birch-2);
+    border-left-color:var(--oak);
+  }
+  .drawer a .num{
+    font-family:'IBM Plex Mono',monospace;
+    color:var(--oak);
+    font-size:0.78rem;
+    min-width:20px;
+  }
+  /* ---------- hero ---------- */
+  .hero{
+    padding:44px 20px 30px;
+    background:linear-gradient(180deg,var(--walnut) 0%, var(--walnut-2) 100%);
+    color:var(--birch);
+    position:relative;
+  }
+  .hero .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.72rem;
+    color:var(--oak-light);
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    margin-bottom:10px;
+  }
+  .hero h1{
+    color:var(--birch);
+    font-size:1.85rem;
+    margin:0 0 10px;
+    line-height:1.25;
+  }
+  .hero p{
+    color:var(--birch-2);
+    font-size:0.94rem;
+    max-width:520px;
+    margin:0;
+  }
+  .hero-seam{background:var(--walnut-2);}
+  .hero-seam::before{background:rgba(217,183,140,0.35);}
+  .hero-seam::after{
+    background-image:repeating-linear-gradient(
+      90deg, transparent 0px, transparent 78px,
+      rgba(217,183,140,0.35) 78px, rgba(217,183,140,0.35) 80px
+    );
+  }
+  /* ---------- content wrap ---------- */
+  .wrap{max-width:760px; margin:0 auto; padding:0 16px;}
+  .intro-card{
+    margin-top:-14px;
+    background:var(--birch);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:18px 18px;
+  }
+  .intro-card p{margin:0 0 10px; font-size:0.92rem;}
+  .intro-card p:last-child{margin-bottom:0;}
+  .checklist-mini{
+    display:flex; flex-wrap:wrap; gap:8px;
+    margin-top:14px;
+  }
+  .pill{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.72rem;
+    background:var(--sage-light);
+    color:var(--sage);
+    padding:5px 10px;
+    border-radius:999px;
+  }
+  /* ---------- sections / accordion ---------- */
+  .section-block{
+    margin-top:22px;
+    scroll-margin-top:70px;
+  }
+  .acc-header{
+    display:flex; align-items:center; gap:14px;
+    padding:16px 4px;
+    cursor:pointer;
+    border:none;
+    background:transparent;
+    width:100%;
+    text-align:left;
+  }
+  .acc-num{
+    font-family:'IBM Plex Mono',monospace;
+    color:var(--oak);
+    font-size:0.85rem;
+    min-width:26px;
+    border:1px solid var(--oak-light);
+    border-radius:var(--radius);
+    padding:3px 0;
+    text-align:center;
+    flex-shrink:0;
+  }
+  .acc-title{
+    flex:1;
+    font-size:1.12rem;
+    font-weight:600;
+    color:var(--walnut);
+  }
+  .acc-sub{
+    display:block;
+    font-family:'Inter',sans-serif;
+    font-weight:400;
+    font-size:0.78rem;
+    color:#8A7A6B;
+    margin-top:2px;
+  }
+  .acc-chevron{
+    width:20px; height:20px;
+    flex-shrink:0;
+    transition:transform 0.25s ease;
+    color:var(--oak);
+  }
+  .acc-header[aria-expanded="true"] .acc-chevron{transform:rotate(45deg);}
+  .acc-panel{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height 0.35s ease;
+  }
+  .acc-panel-inner{
+    padding:2px 4px 22px 44px;
+    font-size:0.92rem;
+  }
+  .acc-panel-inner h4{
+    font-family:'Inter',sans-serif;
+    font-size:0.88rem;
+    color:var(--walnut);
+    margin:16px 0 8px;
+    font-weight:700;
+  }
+  .acc-panel-inner h4:first-child{margin-top:0;}
+  .acc-panel-inner ul, .acc-panel-inner ol{
+    margin:6px 0; padding-left:20px;
+  }
+  .acc-panel-inner li{margin-bottom:6px;}
+  .acc-panel-inner p{margin:6px 0;}
+  .fill{
+    background:var(--sage-light);
+    color:var(--sage);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.85em;
+    padding:0 4px;
+    border-radius:3px;
+  }
+  table{
+    width:100%;
+    border-collapse:collapse;
+    margin:10px 0 16px;
+    font-size:0.86rem;
+  }
+  th,td{
+    border:1px solid var(--line);
+    padding:8px 9px;
+    text-align:left;
+    vertical-align:top;
+  }
+  th{
+    background:var(--birch-2);
+    color:var(--walnut);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.74rem;
+    text-transform:uppercase;
+  }
+  .flow{
+    display:flex; flex-direction:column; gap:0;
+    margin:12px 0 18px;
+  }
+  .flow-step{
+    display:flex; align-items:flex-start; gap:12px;
+    padding:10px 0;
+    border-bottom:1px dashed var(--line);
+  }
+  .flow-step:last-child{border-bottom:none;}
+  .flow-badge{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.72rem;
+    background:var(--walnut);
+    color:var(--birch);
+    border-radius:999px;
+    width:24px; height:24px;
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0;
+  }
+  .flow-body b{display:block; color:var(--walnut); font-size:0.9rem;}
+  .flow-body span{font-size:0.83rem; color:#5A4E43;}
+  .callout{
+    border-left:3px solid var(--sage);
+    background:var(--sage-light);
+    padding:10px 12px;
+    font-size:0.85rem;
+    color:#40492F;
+    border-radius:0 var(--radius) var(--radius) 0;
+    margin:12px 0;
+  }
+  .callout.warn{
+    border-left-color:var(--oak);
+    background:#FBF0E1;
+    color:#5A3E1E;
+  }
+  .check-item{
+    display:flex; align-items:flex-start; gap:8px;
+    padding:6px 0;
+    font-size:0.88rem;
+  }
+  .check-item .box{
+    width:16px; height:16px;
+    border:1.5px solid var(--oak);
+    border-radius:3px;
+    flex-shrink:0;
+    margin-top:2px;
+  }
+  footer{
+    text-align:center;
+    padding:30px 16px;
+    color:#8A7A6B;
+    font-size:0.78rem;
+    font-family:'IBM Plex Mono',monospace;
+  }
+  @media (min-width:640px){
+    .hero h1{font-size:2.2rem;}
+    .acc-title{font-size:1.2rem;}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <span class="name">株式会社 호인</span>
+    <span class="tag">HO-IN FLOORING · SALES MANUAL</span>
+  </div>
+  <button class="menu-btn" onclick="toggleDrawer(true)" aria-label="목차 열기">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M2 5H18M2 10H18M2 15H18" stroke="#FAF5EC" stroke-width="1.6" stroke-linecap="round"/></svg>
+  </button>
+</div>
+
+<div class="overlay" id="overlay" onclick="toggleDrawer(false)"></div>
+<nav class="drawer" id="drawer">
+  <div class="drawer-head">
+    <div class="label">Table of Contents</div>
+    <h3>목차</h3>
+  </div>
+  <a href="#s0" onclick="toggleDrawer(false)"><span class="num">00</span> 환영합니다</a>
+  <a href="#s1" onclick="toggleDrawer(false)"><span class="num">01</span> 회사 소개</a>
+  <a href="#s2" onclick="toggleDrawer(false)"><span class="num">02</span> 제품 지식</a>
+  <a href="#s3" onclick="toggleDrawer(false)"><span class="num">03</span> 영업 프로세스</a>
+  <a href="#s4" onclick="toggleDrawer(false)"><span class="num">04</span> 고객 응대 가이드</a>
+  <a href="#s5" onclick="toggleDrawer(false)"><span class="num">05</span> 견적·계약 실무</a>
+  <a href="#s6" onclick="toggleDrawer(false)"><span class="num">06</span> 시공 관리</a>
+  <a href="#s7" onclick="toggleDrawer(false)"><span class="num">07</span> AS·클레임 처리</a>
+  <a href="#s8" onclick="toggleDrawer(false)"><span class="num">08</span> 영업 행정</a>
+  <a href="#s9" onclick="toggleDrawer(false)"><span class="num">09</span> 첫 달 체크리스트</a>
+  <a href="#s10" onclick="toggleDrawer(false)"><span class="num">10</span> 부록</a>
+</nav>
+
+<header class="hero">
+  <div class="eyebrow">New Employee Onboarding</div>
+  <h1>호인 마루영업<br>신규 직원 매뉴얼</h1>
+  <p>입사 첫날부터 독립적으로 상담·견적·계약을 진행하기까지, 알아야 할 모든 것을 담았습니다. 목차를 눌러 필요한 부분부터 확인하세요.</p>
+</header>
+<div class="seam hero-seam"></div>
+
+<main class="wrap">
+
+  <div class="intro-card" id="s0">
+    <p><b>이 매뉴얼의 목적</b> — 마루(바닥재) 영업 담당자가 알아야 할 제품 지식, 고객 응대, 계약·시공 프로세스, 사내 행정을 하나로 정리했습니다. B2C(일반 소비자)와 B2B(건설사·시공업체) 두 채널을 모두 다룹니다.</p>
+    <p>대괄호 <span class="fill">[ ]</span>로 표시된 부분은 호인의 실제 정보(담당자, 연락처, 사내 시스템명, 가격 정책 등)로 채워 넣는 자리입니다.</p>
+    <div class="checklist-mini">
+      <span class="pill">B2C + B2B</span>
+      <span class="pill">모바일 최적화</span>
+      <span class="pill">11개 섹션</span>
+    </div>
+  </div>
+
+  <!-- 01 회사 소개 -->
+  <section class="section-block" id="s1">
+    <button class="acc-header" aria-expanded="false" onclick="toggleAcc(this)">
+      <span class="acc-num">01</span>
+      <span class="acc-title">회사 소개<span class="acc-sub">호인이 어떤 회사인지, 우리가 일하는 방식</span></span>
+      <svg class="acc-chevron" viewBox="0 0 20 20" fill="none"><path d="M10 3V17M3 10H17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    </button>
+    <div class="acc-panel">
+      <div class="acc-panel-inner">
+        <h4>회사 개요</h4>
+        <ul>
+          <li>회사명: 주식회사 호인 (설립 <span class="fill">[설립연도]</span>)</li>
+          <li>주요 사업: 마루(바닥재) 유통 및 시공 영업 — 강마루, 강화마루, 원목마루, <span class="fill">[취급 품목 추가]</span></li>
+          <li>본사 소재지: <span class="fill">[주소]</span> · 대표 연락처: <span class="fill">[전화번호]</span></li>
+          <li>대표: <span class="fill">[대표자명]</span></li>
+        </ul>
+        <h4>조직 구성</h4>
+        <p><span class="fill">[영업팀/시공팀/행정팀 등 부서 구조와 보고 라인을 표나 도식으로 정리]</span></p>
+        <table>
+          <tr><th>부서</th><th>담당 업무</th><th>담당자</th></tr>
+          <tr><td>영업팀</td><td>고객 상담, 견적, 계약</td><td class="fill">[이름/연락처]</td></tr>
+          <tr><td>시공팀</td><td>현장 실측, 시공, 사후 점검</td><td class="fill">[이름/연락처]</td></tr>
+          <tr><td>행정/경리</td><td>계약서 관리, 매입·매출 정산</td><td class="fill">[이름/연락처]</td></tr>
+        </table>
+        <h4>일하는 방식 (핵심 가치)</h4>
+        <ul>
+          <li>고객과의 약속(견적가, 시공일정)은 반드시 서면·문자로 재확인한다</li>
+          <li>시공 하자는 숨기지 않고 즉시 보고한다</li>
+          <li><span class="fill">[호인만의 영업 철학이나 원칙 추가]</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="seam"></div>
+  </section>
+
+  <!-- 02 제품 지식 -->
+  <section class="section-block" id="s2">
+    <button class="acc-header" aria-expanded="false" onclick="toggleAcc(this)">
+      <span class="acc-num">02</span>
+      <span class="acc-title">제품 지식<span class="acc-sub">마루 종류별 특징과 추천 상황</span></span>
+      <svg class="acc-chevron" viewBox="0 0 20 20" fill="none"><path d="M10 3V17M3 10H17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    </button>
+    <div class="acc-panel">
+      <div class="acc-panel-inner">
+        <p>고객에게 마루를 추천할 때는 예산, 생활 패턴(반려동물, 어린이 유무), 난방 방식(온돌 여부)을 먼저 파악해야 합니다.</p>
+        <table>
+          <tr><th>종류</th><th>특징</th><th>추천 상황</th><th>참고 가격대</th></tr>
+          <tr><td>강化마루</td><td>내구성 강함, 가격 저렴, 원목 질감은 덜함</td><td>임대·상가, 예산 우선 고객</td><td class="fill">[평당 가격]</td></tr>
+          <tr><td>강마루</td><td>강화마루와 원목마루의 중간, 온돌 적합</td><td>일반 가정 리모델링 (가장 대중적)</td><td class="fill">[평당 가격]</td></tr>
+          <tr><td>원목마루</td><td>고급스러운 질감, 가격 높음, 습도에 민감</td><td>고급 주택, 프리미엄 인테리어</td><td class="fill">[평당 가격]</td></tr>
+          <tr><td class="fill">[기타 취급 품목]</td><td class="fill">[특징]</td><td class="fill">[추천 상황]</td><td class="fill">[가격대]</td></tr>
+        </table>
+        <h4>시공 방식 기본 지식</h4>
+        <ul>
+          <li>철거 후 시공 vs 덧시공(기존 바닥 위 시공) — 비용과 층고 차이 설명 필요</li>
+          <li>온돌 난방 여부에 따라 적합한 접착 방식이 다름</li>
+          <li><span class="fill">[호인이 사용하는 시공 공법, 협력 시공팀 소개]</span></li>
+        </ul>
+        <div class="callout">신입 직원은 최소 1회 이상 시공 현장에 동행하여 실제 자재와 시공 과정을 눈으로 익히는 것을 권장합니다.</div>
+      </div>
+    </div>
+    <div class="seam"></div>
+  </section>
+
+  <!-- 03 영업 프로세스 -->
+  <section class="section-block" id="s3">
+    <button class="acc-header" aria-expanded="false" onclick="toggleAcc(this)">
+      <span class="acc-num">03</span>
+      <span class="acc-title">영업 프로세스<span class="acc-sub">B2C·B2B 채널별 진행 흐름</span></span>
+      <svg class="acc-chevron" viewBox="0 0 20 20" fill="none"><path d="M10 3V17M3 10H17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    </button>
+    <div class="acc-panel">
+      <div class="acc-panel-inner">
+        <h4>B2C 프로세스 (일반 소비자)</h4>
+        <div class="flow">
+          <div class="flow-step"><span class="flow-badge">1</span><div class="flow-body"><b>문의 접수</b><span>전화·방문·온라인 문의 → 고객 정보와 요청사항 기록</span></div></div>
+          <div class="flow-step"><span class="flow-badge">2</span><div class="flow-body"><b>현장 실측</b><span>평수, 기존 바닥 상태, 난방 방식 확인 후 사진 촬영</span></div></div>
+          <div class="flow-step"><span class="flow-badge">3</span><div class="flow-body"><b>견적 제시</b><span>제품·시공 방식별 견적서 2~3안 제안</span></div></div>
+          <div class="flow-step"><span class="flow-badge">4</span><div class="flow-body"><b>계약 체결</b><span>계약서 작성, 계약금 입금 확인</span></div></div>
+          <div class="flow-step"><span class="flow-badge">5</span><div class="flow-body"><b>시공</b><span>일정 조율 후 시공팀 배정, 시공 당일 현장 확인</span></div></div>
+          <div class="flow-step"><span class="flow-badge">6</span><div class="flow-body"><b>사후관리</b><span>잔금 정산, 하자 점검, 만족도 확인 및 후기 요청</span></div></div>
+        </div>
+        <h4>B2B 프로세스 (건설사·시공업체)</h4>
+        <div class="flow">
+          <div class="flow-step"><span class="flow-badge">1</span><div class="flow-body"><b>업체 발굴/응대</b><span>건설사·인테리어 업체 대상 영업, 협력업체 등록</span></div></div>
+          <div class="flow-step"><span class="flow-badge">2</span><div class="flow-body"><b>물량 산출·견적</b><span>도면 기준 수량 산출, 단가 협상 (물량 단위 할인 적용)</span></div></div>
+          <div class="flow-step"><span class="flow-badge">3</span><div class="flow-body"><b>계약/발주</b><span>공급계약서 또는 발주서 기준 진행, 납품 일정 확정</span></div></div>
+          <div class="flow-step"><span class="flow-badge">4</span><div class="flow-body"><b>납품·시공 협업</b><span>현장 반입 일정 조율, 시공업체와 품질 기준 사전 협의</span></div></div>
+          <div class="flow-step"><span class="flow-badge">5</span><div class="flow-body"><b>정산</b><span>기성금·잔금 정산, 세금계산서 발행</span></div></div>
+        </div>
+        <div class="callout warn">B2B는 물량이 크고 정산 주기가 길기 때문에, 계약서에 <b>납기 지연 시 책임 소재</b>와 <b>하자 보수 기간</b>을 반드시 명시해야 합니다.</div>
+      </div>
+    </div>
+    <div class="seam"></div>
+  </section>
+
+  <!-- 04 고객 응대 가이드 -->
+  <section class="section-block" id="s4">
+    <button class="acc-header" aria-expanded="false" onclick="toggleAcc(this)">
+      <span class="acc-num">04</span>
+      <span class="acc-title">고객 응대 가이드<span class="acc-sub">상담 스크립트와 자주 묻는 질문</span></span>
+      <svg class="acc-chevron" viewBox="0 0 20 20" fill="none"><path d="M10 3V17M3 10H17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    </button>
+    <div class="acc-panel">
+      <div class="acc-panel-inner">
+        <h4>첫 통화 응대 순서</h4>
+        <ol>
+          <li>인사 및 회사 소개 (예: "안녕하세요, 호인 마루입니다.")</li>
+          <li>문의 목적 파악 (신규 시공 / 부분 보수 / 견적 문의)</li>
+          <li>공간 정보 확인 (평수, 주소, 시공 희망 시기)</li>
+          <li>실측 방문 일정 제안</li>
+          <li>담당자 연락처 안내 후 마무리</li>
+        </ol>
+        <h4>자주 묻는 질문 (FAQ)</h4>
+        <ul>
+          <li><b>Q. 시공 기간은 얼마나 걸리나요?</b> — <span class="fill">[평형별 평균 시공일수 입력]</span></li>
+          <li><b>Q. 온돌에도 원목마루 시공이 가능한가요?</b> — <span class="fill">[답변 입력]</span></li>
+          <li><b>Q. 하자 발생 시 보증 기간은요?</b> — <span class="fill">[보증 정책 입력]</span></li>
+          <li><b>Q. 계약금/잔금 비율은 어떻게 되나요?</b> — <span class="fill">[비율 입력, 예: 계약금 30% / 잔금 70%]</span></li>
+        </ul>
+        <div class="callout">모르는 질문을 받았을 때는 임의로 답하지 말고 "확인 후 다시 연락드리겠습니다"라고 답한 뒤 팀장에게 확인합니다.</div>
+      </div>
+    </div>
+    <div class="seam"></div>
+  </section>
+
+  <!-- 05 견적·계약 실무 -->
+  <section class="section-block" id="s5">
+    <button class="acc-header" aria-expanded="false" onclick="toggleAcc(this)">
+      <span class="acc-num">05</span>
+      <span class="acc-title">견적·계약 실무<span class="acc-sub">견적서 작성법과 계약 체크리스트</span></span>
+      <svg class="acc-chevron" viewBox="0 0 20 20" fill="none"><path d="M10 3V17M3 10H17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    </button>
+    <div class="acc-panel">
+      <div class="acc-panel-inner">
+        <h4>견적서 필수 항목</h4>
+        <ul>
+          <li>고객명, 시공 주소, 시공 면적(평/㎡)</li>
+          <li>제품명, 등급, 단가, 수량</li>
+          <li>시공비(철거비/부자재비 별도 표기)</li>
+          <li>견적 유효기간, 계약금/잔금 조건</li>
+        </ul>
+        <h4>계약 전 확인 체크리스트</h4>
+        <div class="check-item"><span class="box"></span>고객 서명 및 연락처가 정확히 기재되었는가</div>
+        <div class="check-item"><span class="box"></span>제품명·수량·단가가 견적서와 일치하는가</div>
+        <div class="check-item"><span class="box"></span>시공 일정과 하자보수 조건이 명시되었는가</div>
+        <div class="check-item"><span class="box"></span>계약금 입금 계좌 정보를 정확히 안내했는가</div>
+        <div class="check-item"><span class="box"></span><span class="fill">[사내 전산 시스템에 계약 건 등록 완료]</span></div>
+        <h4>사용 서식</h4>
+        <p><span class="fill">[표준 견적서·계약서 양식 파일 위치 또는 링크 안내]</span></p>
+      </div>
+    </div>
+    <div class="seam"></div>
+  </section>
+
+  <!-- 06 시공 관리 -->
+  <section class="section-block" id="s6">
+    <button class="acc-header" aria-expanded="false" onclick="toggleAcc(this)">
+      <span class="acc-num">06</span>
+      <span class="acc-title">시공 관리<span class="acc-sub">일정 조율과 시공팀 협업</span></span>
+      <svg class="acc-chevron" viewBox="0 0 20 20" fill="none"><path d="M10 3V17M3 10H17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    </button>
+    <div class="acc-panel">
+      <div class="acc-panel-inner">
+        <h4>일정 조율 원칙</h4>
+        <ul>
+          <li>계약 체결 후 <span class="fill">[영업일 기준 며칠 이내]</span> 시공 일정 확정</li>
+          <li>시공 3일 전 고객에게 일정·준비사항(가구 이동 등) 재안내</li>
+          <li>시공팀과 자재 반입 일정, 작업 인원 사전 공유</li>
+        </ul>
+        <h4>현장 품질 체크리스트</h4>
+        <div class="check-item"><span class="box"></span>철거 후 바닥 평탄도 확인</div>
+        <div class="check-item"><span class="box"></span>자재 수량이 실제 시공 면적과 일치하는지 확인</div>
+        <div class="check-item"><span class="box"></span>시공 완료 후 몰딩·마감 부위 사진 촬영</div>
+        <div class="check-item"><span class="box"></span>고객 입회 하에 최종 확인 및 서명</div>
+        <div class="callout warn">시공 중 하자나 추가 비용 발생 요인을 발견하면 임의로 진행하지 말고 즉시 영업 담당자와 고객에게 알립니다.</div>
+      </div>
+    </div>
+    <div class="seam"></div>
+  </section>
+
+  <!-- 07 AS/클레임 -->
+  <section class="section-block" id="s7">
+    <button class="acc-header" aria-expanded="false" onclick="toggleAcc(this)">
+      <span class="acc-num">07</span>
+      <span class="acc-title">AS·클레임 처리<span class="acc-sub">하자 접수부터 해결까지</span></span>
+      <svg class="acc-chevron" viewBox="0 0 20 20" fill="none"><path d="M10 3V17M3 10H17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    </button>
+    <div class="acc-panel">
+      <div class="acc-panel-inner">
+        <div class="flow">
+          <div class="flow-step"><span class="flow-badge">1</span><div class="flow-body"><b>접수</b><span>고객 연락처, 증상, 발생 시점을 정확히 기록</span></div></div>
+          <div class="flow-step"><span class="flow-badge">2</span><div class="flow-body"><b>1차 판단</b><span>사진·통화로 시공 하자 vs 사용상 문제 여부 1차 구분</span></div></div>
+          <div class="flow-step"><span class="flow-badge">3</span><div class="flow-body"><b>현장 방문</b><span>필요 시 담당자 방문, 원인 파악</span></div></div>
+          <div class="flow-step"><span class="flow-badge">4</span><div class="flow-body"><b>처리</b><span>보증기간 내 무상 처리 또는 유상 견적 안내</span></div></div>
+          <div class="flow-step"><span class="flow-badge">5</span><div class="flow-body"><b>기록</b><span>처리 결과를 고객 이력에 남겨 재발 방지 참고자료로 활용</span></div></div>
+        </div>
+        <p><span class="fill">[보증기간 정책, 무상/유상 처리 기준을 구체적으로 입력]</span></p>
+      </div>
+    </div>
+    <div class="seam"></div>
+  </section>
+
+  <!-- 08 영업 행정 -->
+  <section class="section-block" id="s8">
+    <button class="acc-header" aria-expanded="false" onclick="toggleAcc(this)">
+      <span class="acc-num">08</span>
+      <span class="acc-title">영업 행정<span class="acc-sub">문서·보고·전산 시스템</span></span>
+      <svg class="acc-chevron" viewBox="0 0 20 20" fill="none"><path d="M10 3V17M3 10H17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    </button>
+    <div class="acc-panel">
+      <div class="acc-panel-inner">
+        <h4>일일/주간 보고</h4>
+        <ul>
+          <li>일일 상담·계약 현황을 <span class="fill">[사용 툴: 카카오톡 단톡방 / 엑셀 / ERP 등]</span>에 기록</li>
+          <li>주간 회의에서 진행 중인 계약 건 공유</li>
+        </ul>
+        <h4>주요 사내 시스템</h4>
+        <table>
+          <tr><th>시스템</th><th>용도</th></tr>
+          <tr><td class="fill">[시스템명]</td><td class="fill">[견적/계약 관리]</td></tr>
+          <tr><td class="fill">[시스템명]</td><td class="fill">[재고/발주 관리]</td></tr>
+        </table>
+        <h4>문서 보관 규칙</h4>
+        <p><span class="fill">[계약서 원본 보관 위치, 전자 파일 백업 규칙 등 입력]</span></p>
+      </div>
+    </div>
+    <div class="seam"></div>
+  </section>
+
+  <!-- 09 첫 달 체크리스트 -->
+  <section class="section-block" id="s9">
+    <button class="acc-header" aria-expanded="false" onclick="toggleAcc(this)">
+      <span class="acc-num">09</span>
+      <span class="acc-title">신규 직원 첫 달 체크리스트<span class="acc-sub">입사 후 4주 로드맵</span></span>
+      <svg class="acc-chevron" viewBox="0 0 20 20" fill="none"><path d="M10 3V17M3 10H17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    </button>
+    <div class="acc-panel">
+      <div class="acc-panel-inner">
+        <h4>1주차 — 적응</h4>
+        <div class="check-item"><span class="box"></span>회사 소개, 조직도, 사내 시스템 계정 발급</div>
+        <div class="check-item"><span class="box"></span>제품 지식 학습 (본 매뉴얼 2장)</div>
+        <div class="check-item"><span class="box"></span>선배 직원 상담 동행 참관 2회 이상</div>
+        <h4>2주차 — 실무 관찰</h4>
+        <div class="check-item"><span class="box"></span>시공 현장 동행 1회</div>
+        <div class="check-item"><span class="box"></span>견적서 작성 연습 (모의 고객 케이스)</div>
+        <h4>3주차 — 실전 투입</h4>
+        <div class="check-item"><span class="box"></span>선배 동석 하에 실제 고객 상담 진행</div>
+        <div class="check-item"><span class="box"></span>계약서 작성 1건 이상 (검토 후 제출)</div>
+        <h4>4주차 — 독립</h4>
+        <div class="check-item"><span class="box"></span>단독 상담·견적 진행</div>
+        <div class="check-item"><span class="box"></span>팀장과 1개월 피드백 면담</div>
+      </div>
+    </div>
+    <div class="seam"></div>
+  </section>
+
+  <!-- 10 부록 -->
+  <section class="section-block" id="s10">
+    <button class="acc-header" aria-expanded="false" onclick="toggleAcc(this)">
+      <span class="acc-num">10</span>
+      <span class="acc-title">부록<span class="acc-sub">용어집과 사내 연락처</span></span>
+      <svg class="acc-chevron" viewBox="0 0 20 20" fill="none"><path d="M10 3V17M3 10H17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    </button>
+    <div class="acc-panel">
+      <div class="acc-panel-inner">
+        <h4>용어집</h4>
+        <ul>
+          <li><b>덧시공</b> — 기존 바닥을 철거하지 않고 그 위에 새 마루를 시공하는 방식</li>
+          <li><b>걸레받이</b> — 벽과 바닥이 만나는 부분을 마감하는 몰딩</li>
+          <li><b>기성금</b> — 공사 진행률에 따라 나눠 받는 대금 (B2B 계약에서 주로 사용)</li>
+          <li><span class="fill">[추가 용어 입력]</span></li>
+        </ul>
+        <h4>사내 비상 연락망</h4>
+        <table>
+          <tr><th>구분</th><th>이름</th><th>연락처</th></tr>
+          <tr><td>영업팀장</td><td class="fill">[이름]</td><td class="fill">[연락처]</td></tr>
+          <tr><td>시공팀장</td><td class="fill">[이름]</td><td class="fill">[연락처]</td></tr>
+          <tr><td>대표</td><td class="fill">[이름]</td><td class="fill">[연락처]</td></tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  주식회사 호인 · 신규 직원 온보딩 매뉴얼 · <span class="fill">최종 업데이트 [날짜]</span>
+</footer>
+
+<script>
+  function toggleDrawer(open){
+    document.getElementById('drawer').classList.toggle('open', open);
+    document.getElementById('overlay').classList.toggle('open', open);
+  }
+  function toggleAcc(btn){
+    var expanded = btn.getAttribute('aria-expanded') === 'true';
+    btn.setAttribute('aria-expanded', String(!expanded));
+    var panel = btn.nextElementSibling;
+    if(expanded){
+      panel.style.maxHeight = null;
+    } else {
+      panel.style.maxHeight = panel.scrollHeight + 'px';
+    }
+  }
+  // open the first section by default
+  document.addEventListener('DOMContentLoaded', function(){
+    var first = document.querySelector('.acc-header');
+    if(first) toggleAcc(first);
+  });
+  // recalc open panel heights on resize (font reflow etc.)
+  window.addEventListener('resize', function(){
+    document.querySelectorAll('.acc-header[aria-expanded="true"]').forEach(function(btn){
+      btn.nextElementSibling.style.maxHeight = btn.nextElementSibling.scrollHeight + 'px';
+    });
+  });
+</script>
+
+</body>
+</html>
